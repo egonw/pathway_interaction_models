@@ -1,0 +1,18 @@
+##SPARQL
+#http://sparql.uniprot.org
+##DESCRIPTION
+# This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
+##DATATYPES
+#Geneproducts, Metabolites, Complex
+
+PREFIX up:<http://purl.uniprot.org/core/>
+SELECT DISTINCT ?targetprotein
+WHERE
+{
+		VALUES ?sourceprotein {<http://purl.uniprot.org/uniprot/P05023>}
+        ?sourceprotein <http://purl.uniprot.org/core/interaction> ?source .
+        ?targetprotein <http://purl.uniprot.org/core/interaction> ?target .
+        ?source <http://purl.uniprot.org/core/participant> ?t .
+        ?target <http://purl.uniprot.org/core/participant> ?t .
+        FILTER (?sourceprotein != ?targetprotein)
+}
