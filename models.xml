@@ -1,5 +1,27 @@
 <models>
-    <Uniprot/>
+    <Uniprot>
+        <Protein_protein_interactions.sparql>
+            <SPARQL>http://sparql.wikipathways.org
+            </SPARQL>
+            <DESCRIPTION>This query extracts from Wikipathways all simple interactions. These are relationships between
+                one input and one output pathway element
+            </DESCRIPTION>
+            <DATATYPES>Geneproducts, Proteins
+            </DATATYPES>
+            <query>PREFIX up:&lt;http://purl.uniprot.org/core/&gt;
+                SELECT DISTINCT ?targetprotein
+                WHERE
+                {
+                VALUES ?sourceprotein {&lt;http://purl.uniprot.org/uniprot/P05023&gt;}
+                ?sourceprotein &lt;http://purl.uniprot.org/core/interaction&gt; ?source .
+                ?targetprotein &lt;http://purl.uniprot.org/core/interaction&gt; ?target .
+                ?source &lt;http://purl.uniprot.org/core/participant&gt; ?t .
+                ?target &lt;http://purl.uniprot.org/core/participant&gt; ?t .
+                FILTER (?sourceprotein != ?targetprotein)
+                }
+            </query>
+        </Protein_protein_interactions.sparql>
+    </Uniprot>
     <WikiPathways>
         <binary_interactions.sparql>
             <SPARQL>http://sparql.wikipathways.org
@@ -14,7 +36,7 @@
         </binary_interactions.sparql>
     </WikiPathways>
     <Wikidata>
-        <Disease_association.sparql.py>
+        <Disease_association.sparql>
             <SPARQL>http://sparql.uniprot.org
             </SPARQL>
             <DESCRIPTION>This query extracts from Wikipathways all simple interactions. These are relationships between
@@ -35,6 +57,6 @@
                 FILTER (?sourceprotein != ?targetprotein)
                 }
             </query>
-        </Disease_association.sparql.py>
+        </Disease_association.sparql>
     </Wikidata>
 </models>

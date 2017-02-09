@@ -17,9 +17,12 @@ root = ET.Element("models")
 
 for filename in sorted(os.listdir(".")):
     if os.path.isdir(filename):
+        if filename == ".git":
+            continue
         if filename != ".idea":
             menu = ET.SubElement(root, filename)
             for subfilename in sorted(os.listdir("./" + filename)):
+                print(filename, subfilename)
                 sparqlFile = ET.SubElement(menu, subfilename)
                 if os.path.isfile("./" + filename + "/" + subfilename):
                     with open("./" + filename + "/" + subfilename) as file_:
