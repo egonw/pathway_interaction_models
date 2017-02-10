@@ -172,7 +172,27 @@
                 }
             </query>
         </Disease_association.sparql>
-        <physically_interacts_with.py>
+        <encoded_by.sparql>
+            <SPARQL>https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=
+            </SPARQL>
+            <DESCRIPTION>This query extracts from Wikipathways all simple interactions. These are relationships between
+                one input and one output pathway element
+            </DESCRIPTION>
+            <DATATYPES>Geneproducts, Proteins
+            </DATATYPES>
+            <MENU_LABEL>Is encoded by
+            </MENU_LABEL>
+            <query>
+                SELECT ?protein ?geneId
+                WHERE
+                {
+                ?protein wdt:P702 ?gene .
+                ?gene wdt:P351 ?geneID .
+                }
+            </query>
+        </encoded_by.sparql>
+        <encodes.sparql/>
+        <physically_interacts_with.sparql>
             <SPARQL>https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=
             </SPARQL>
             <DESCRIPTION>This query extracts from Wikipathways all simple interactions. These are relationships between
@@ -212,6 +232,6 @@
                 {bd: serviceParam wikibase: language "en"}
                 }
             </query>
-        </physically_interacts_with.py>
+        </physically_interacts_with.sparql>
     </Wikidata>
 </models>
