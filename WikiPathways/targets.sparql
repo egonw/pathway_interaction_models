@@ -1,0 +1,16 @@
+##SPARQL
+#http://sparql.wikipathways.org
+##DESCRIPTION
+# This query extracts from Wikipathways element that are inhibited by a given source. These are relationships between one input and one output pathway element
+##DATATYPES
+#Geneproducts, Proteins
+##MENU_LABEL
+# targets
+
+SELECT * WHERE
+{
+
+    ?interaction a wp:DirectedInhibition .
+    ?interaction wp:source ?source .
+    ?interaction wp:target ?target .
+}
