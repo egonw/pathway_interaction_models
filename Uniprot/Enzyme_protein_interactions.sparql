@@ -1,9 +1,9 @@
 ##SPARQL
-#http://sparql.wikipathways.org
+#http://sparql.uniprot.org/sparql/
 ##DESCRIPTION
 # This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
 ##DATATYPES
-#Geneproducts, Proteins
+#Proteins
 ##MENU_LABEL
 # get interaction with Proteins
 
@@ -20,11 +20,13 @@ PREFIX dc:<http://purl.org/dc/terms/>
 PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>
 PREFIX faldo:<http://biohackathon.org/resource/faldo#>
 PREFIX up:<http://purl.uniprot.org/core/>
-SELECT DISTINCT *
+SELECT DISTINCT ?protein ?label
 WHERE
 {
-	values ?enzyme {ec:3.6.3.9}
-    ?protein <http://purl.uniprot.org/core/enzyme> ?enzyme .
-    ?protein up:organism ?organism . # Can we get the taxon from pathvisio?
+	VALUES ?enzyme {ec:+inputID+}
+	?protein up:enzyme ?enzyme .
+	?protein rdfs:label ?label .
+	?protein up:organism taxon:+taxon+ 
+	
 }
 

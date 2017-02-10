@@ -5,19 +5,16 @@
 ##DATATYPES
 #Proteins
 ##MENU_LABEL
-# Get Protein-Protein Interactions
+# Get Protein-Enzyme Interactions
 
 PREFIX taxon:<http://purl.uniprot.org/taxonomy/>  
 PREFIX uniprotkb:<http://purl.uniprot.org/uniprot/> 
 PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#> 
 PREFIX up:<http://purl.uniprot.org/core/> 
-SELECT DISTINCT ?targetprotein ?label WHERE {
-	VALUES ?sourceprotein {uniprotkb:+inputID+}
-	?sourceprotein up:interaction ?source .
-	?targetprotein up:interaction ?target .
-	?targetprotein	rdfs:label ?label .
-	?source up:participant ?t .
-	?target up:participant  ?t .
-	?targetprotein ?p ?a.
-	FILTER (?sourceprotein != ?targetprotein)
+SELECT DISTINCT ?enzyme ?label WHERE {
+	VALUES ?protein {uniprotkb:+inputID+}
+	?protein up:enzyme ?enzyme .
+	?protein rdfs:label ?label .
+	?protein up:organism taxon:+taxon+ .
 }
+
