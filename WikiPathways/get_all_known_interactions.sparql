@@ -1,0 +1,23 @@
+##SPARQL
+#http://sparql.wikipathways.org
+##DESCRIPTION
+# This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
+##DATATYPES
+#Geneproducts, Proteins
+##MENU_LABEL
+# Interacts with
+
+PREFIX gpml:    <http://vocabularies.wikipathways.org/gpml#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX dc:      <http://purl.org/dc/elements/1.1/>
+PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+
+#Find all interactions that are connected to a particular datanode.
+
+SELECT DISTINCT ?interaction ?pathway  WHERE {
+
+   ?pathway a wp:Pathway .
+   ?interaction dcterms:isPartOf ?pathway .
+   ?interaction a wp:Interaction .
+   ?interaction wp:participants <http://identifiers.org/ensembl/ENSG00000125845> .
+}

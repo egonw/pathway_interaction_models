@@ -4,6 +4,9 @@
 # This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
 ##DATATYPES
 #Geneproducts, Proteins
+##MENU_LABEL
+# get interaction with Proteins
+
 PREFIX keywords:<http://purl.uniprot.org/keywords/>
 PREFIX uniprotkb:<http://purl.uniprot.org/uniprot/>
 PREFIX taxon:<http://purl.uniprot.org/taxonomy/>

@@ -4,6 +4,9 @@
 # This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
 ##DATATYPES
 # Geneproducts, Proteins
+##MENU_LABEL
+# Physically interacts with
+
 SELECT ?source ?sourceLabel ?target ?targetLabel ?source_geneId ?source_uniprotId
 ?target_geneId ?target_uniprotId ?source_pubchemId ?target_pubchemId
 WHERE
