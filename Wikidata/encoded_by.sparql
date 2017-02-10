@@ -1,0 +1,15 @@
+##SPARQL
+# https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=
+##DESCRIPTION
+# This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
+##DATATYPES
+# Geneproducts, Proteins
+##MENU_LABEL
+# Is encoded by
+
+SELECT ?protein ?geneId
+WHERE
+{
+	?protein wdt:P702 ?gene .
+    ?gene wdt:P351 ?geneID .
+}
