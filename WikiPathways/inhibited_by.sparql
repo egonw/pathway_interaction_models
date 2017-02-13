@@ -12,6 +12,6 @@ SELECT * WHERE
     ?interaction a wp:Inhibition ;
                wp:source ?source ;
                wp:target ?target .
-    ?source dcterms:identifier +inputID+ .
-    ?target dcterms:identifier ?targetID .
+    ?source dcterms:identifier ?sourceID .
+    ?target dcterms:identifier +inputID+ .
 }
