@@ -7,17 +7,29 @@
 ##MENU_LABEL
 # Interacts with
 
-PREFIX gpml:    <http://vocabularies.wikipathways.org/gpml#>
-PREFIX dcterms: <http://purl.org/dc/terms/>
-PREFIX dc:      <http://purl.org/dc/elements/1.1/>
-PREFIX rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX gpml:<http://vocabularies.wikipathways.org/gpml#>
+PREFIX dcterms:<http://purl.org/dc/terms/>
+PREFIX dc:<http://purl.org/dc/elements/1.1/>
+PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX wp:<http://vocabularies.wikipathways.org/wp#>
+PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+			
+SELECT DISTINCT ?pathway ?interaction ?typeInt  ?participants ?source ?target ?typeS ?typeT (str(?SourceLabel)as?labelS) (str(?TargetLabel)as?labelT)  ?DataNodeLabel  WHERE {
+ ?pathway a wp:Pathway .
+ ?interaction dcterms:isPartOf ?pathway . 
+ ?interaction a wp:Interaction .
+ ?interaction a ?typeInt .
+ FILTER (!regex(str(?typeInt), 'http://vocabularies.wikipathways.org/wp#Interaction','i')) .
+ ?interaction wp:participants ?participants .
 
-#Find all interactions that are connected to a particular datanode.
+ ?participants +sparqlInput+ .
 
-SELECT DISTINCT ?interaction ?pathway  WHERE {
-
-   ?pathway a wp:Pathway .
-   ?interaction dcterms:isPartOf ?pathway .
-   ?interaction a wp:Interaction .
-   ?interaction wp:participants <http://identifiers.org/ensembl/ENSG00000125845> .
+ ?interaction wp:source ?source.
+ ?interaction wp:target ?target.
+ ?source rdfs:label ?SourceLabel . 
+ ?source a ?typeS . 
+ FILTER (!regex(str(?typeS), 'http://vocabularies.wikipathways.org/wp#DataNode','i')) .
+ ?target rdfs:label ?TargetLabel .   
+ ?target a ?typeT . 
+ FILTER (!regex(str(?typeT), 'http://vocabularies.wikipathways.org/wp#DataNode','i')) .
 }

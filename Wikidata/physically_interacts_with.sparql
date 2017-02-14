@@ -1,5 +1,5 @@
 ##SPARQL
-# https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=
+#https://query.wikidata.org/sparql?
 ##DESCRIPTION
 # This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
 ##DATATYPES
@@ -7,31 +7,20 @@
 ##MENU_LABEL
 # Physically interacts with
 
-SELECT ?source ?sourceLabel ?target ?targetLabel ?source_geneId ?source_uniprotId
-?target_geneId ?target_uniprotId ?source_pubchemId ?target_pubchemId
+PREFIX wd: <http://www.wikidata.org/entity/> 
+PREFIX wdt: <http://www.wikidata.org/prop/direct/> 
+PREFIX wikibase: <http://wikiba.se/ontology#> 
+PREFIX p: <http://www.wikidata.org/prop/> 
+PREFIX ps: <http://www.wikidata.org/prop/statement/> 
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/> 
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX bd: <http://www.bigdata.com/rdf#> 
+
+SELECT ?protein ?proteinLabel ?compound ?compoundLabel ?pubchemCid
 WHERE
 {
-?source
-wdt: P129 ?target.
-    OPTIONAL
-{?source
-wdt: P351 ?source_geneId}
-OPTIONAL
-{?source
-wdt: P352 ?source_uniprotId}
-OPTIONAL
-{?source
-wdt: P661 ?source_pubchemId}
-OPTIONAL
-{?target
-wdt: P351 ?target_geneId}
-OPTIONAL
-{?target
-wdt: P352 ?target_uniprotId}
-OPTIONAL
-{?target
-wdt: P661 ?target_pubchemId}
-SERVICE
-wikibase: label
-{bd: serviceParam wikibase: language "en"}
+	?protein wdt:P352 "+inputID+" ;
+          wdt:P129 ?compound .
+    ?compound wdt:P662 ?pubchemCid .
+	SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
 }

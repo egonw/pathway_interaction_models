@@ -5,7 +5,7 @@
 ##DATATYPES
 #Proteins
 ##MENU_LABEL
-# get interaction with Proteins
+# Get Enzyme-Protein Interactions
 
 PREFIX keywords:<http://purl.uniprot.org/keywords/>
 PREFIX uniprotkb:<http://purl.uniprot.org/uniprot/>

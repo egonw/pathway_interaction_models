@@ -1,5 +1,5 @@
 ##SPARQL
-#https://query.wikidata.org/bigdata/namespace/wdq/sparql?query={SPARQL}
+#https://query.wikidata.org/sparql?
 ##DESCRIPTION
 # This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
 ##DATATYPES
@@ -7,14 +7,19 @@
 ##MENU_LABEL
 # Get genes with the same Disease association
 
-PREFIX up:<http://purl.uniprot.org/core/>
-SELECT DISTINCT ?targetprotein
-WHERE
-{
-		VALUES ?sourceprotein {<http://purl.uniprot.org/uniprot/P05023>}
-        ?sourceprotein <http://purl.uniprot.org/core/interaction> ?source .
-        ?targetprotein <http://purl.uniprot.org/core/interaction> ?target .
-        ?source <http://purl.uniprot.org/core/participant> ?t .
-        ?target <http://purl.uniprot.org/core/participant> ?t .
-        FILTER (?sourceprotein != ?targetprotein)
+PREFIX wd: <http://www.wikidata.org/entity/> 
+PREFIX wdt: <http://www.wikidata.org/prop/direct/> 
+PREFIX wikibase: <http://wikiba.se/ontology#> 
+PREFIX p: <http://www.wikidata.org/prop/> 
+PREFIX ps: <http://www.wikidata.org/prop/statement/> 
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/> 
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX bd: <http://www.bigdata.com/rdf#> 
+			
+SELECT  ?suggested_entrezid ?suggested_geneLabel WHERE {
+ ?gene wdt:P2293 ?disease .
+ ?gene wdt:P351 "+inputID+" .
+ ?suggested_gene wdt:P2293 ?disease ;
+ wdt:P351 ?suggested_entrezid .
+ SERVICE wikibase:label { bd:serviceParam wikibase:language 'en' }
 }

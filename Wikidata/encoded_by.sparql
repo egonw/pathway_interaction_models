@@ -1,5 +1,5 @@
 ##SPARQL
-# https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=
+#https://query.wikidata.org/sparql?
 ##DESCRIPTION
 # This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
 ##DATATYPES
@@ -7,9 +7,20 @@
 ##MENU_LABEL
 # Is encoded by
 
-SELECT ?protein ?geneId
+PREFIX wd: <http://www.wikidata.org/entity/> 
+PREFIX wdt: <http://www.wikidata.org/prop/direct/> 
+PREFIX wikibase: <http://wikiba.se/ontology#> 
+PREFIX p: <http://www.wikidata.org/prop/> 
+PREFIX ps: <http://www.wikidata.org/prop/statement/> 
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/> 
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX bd: <http://www.bigdata.com/rdf#> 
+
+SELECT ?gene ?geneLabel ?geneId
 WHERE
 {
-	?protein wdt:P702 ?gene .
-    ?gene wdt:P351 ?geneID .
+	?protein wdt:P352 "+inputID+" ;
+          wdt:P702 ?gene .
+    ?gene wdt:P351 ?geneId .
+	SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
 }

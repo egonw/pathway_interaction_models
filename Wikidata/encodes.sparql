@@ -1,0 +1,26 @@
+##SPARQL
+#https://query.wikidata.org/sparql?
+##DESCRIPTION
+# This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
+##DATATYPES
+# Geneproducts, Proteins
+##MENU_LABEL
+# Encodes
+
+PREFIX wd: <http://www.wikidata.org/entity/> 
+PREFIX wdt: <http://www.wikidata.org/prop/direct/> 
+PREFIX wikibase: <http://wikiba.se/ontology#> 
+PREFIX p: <http://www.wikidata.org/prop/> 
+PREFIX ps: <http://www.wikidata.org/prop/statement/> 
+PREFIX pq: <http://www.wikidata.org/prop/qualifier/> 
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX bd: <http://www.bigdata.com/rdf#> 
+
+SELECT ?protein ?proteinLabel ?uniprotId
+WHERE
+{
+	?gene wdt:P351 "1234" ;
+          wdt:P688 ?protein .
+    ?protein wdt:P352 ?uniprotId .
+	SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
+}

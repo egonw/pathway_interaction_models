@@ -1,9 +1,100 @@
 <models>
+  <ChEMBL>
+    <Compound_targets_interactions.sparql>
+      <DESCRIPTION> This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
+</DESCRIPTION>
+      <MENU_LABEL>Get Compound-Targets interaction
+</MENU_LABEL>
+      <SPARQL>https://www.ebi.ac.uk/rdf/services/chembl/sparql
+</SPARQL>
+      <query>
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;
+PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt;
+PREFIX dcterms: &lt;http://purl.org/dc/terms/&gt;
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+PREFIX cco: &lt;http://rdf.ebi.ac.uk/terms/chembl#&gt;
+PREFIX chembl_molecule: &lt;http://rdf.ebi.ac.uk/resource/chembl/molecule/&gt;
+
+SELECT DISTINCT ?uniprot ?actType ?actValue ?actUnits ?label WHERE {
+	  BIND (chembl_molecule:+inputID+ AS ?compound)
+	  { ?activity a cco:Activity ;
+	            cco:hasMolecule ?compound ;
+	            cco:hasAssay ?assay ;
+	            cco:standardType ?actType ;
+	            cco:standardValue ?actValue ;
+	            cco:standardUnits ?actUnits . }
+	  MINUS {
+	    ?activity cco:standardUnits '%' .
+	  }
+	  ?assay cco:hasTarget ?target ;
+	         cco:assayType 'Binding' .
+	  ?target cco:hasTargetComponent ?targetcmpt .
+	  ?targetcmpt cco:targetCmptXref ?uniprot .
+	  ?targetcmpt dcterms:description ?label .
+	  ?uniprot a cco:UniprotRef
+} ORDER BY ASC(?actValue)
+LIMIT 30
+</query>
+      <DATATYPES>Proteins
+</DATATYPES>
+    </Compound_targets_interactions.sparql>
+    <Protein_compound_interactions.sparql>
+      <DESCRIPTION> This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
+</DESCRIPTION>
+      <MENU_LABEL>Get Protein-Compounds interaction
+</MENU_LABEL>
+      <SPARQL>https://www.ebi.ac.uk/rdf/services/chembl/sparql
+</SPARQL>
+      <query>
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX owl: &lt;http://www.w3.org/2002/07/owl#&gt;
+PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt;
+PREFIX dcterms: &lt;http://purl.org/dc/terms/&gt;
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+PREFIX cco: &lt;http://rdf.ebi.ac.uk/terms/chembl#&gt;
+	
+PREFIX chembl_molecule: &lt;http://rdf.ebi.ac.uk/resource/chembl/molecule/&gt;
+PREFIX uniprot: &lt;http://purl.uniprot.org/uniprot/&gt;
+
+SELECT DISTINCT ?compound ?actType ?actValue ?actUnits ?label WHERE {
+  BIND (uniprot:+inputID+ AS ?uniprot)
+  { ?activity a cco:Activity ;
+            cco:hasMolecule ?compound ;
+            cco:hasAssay ?assay ;
+            cco:standardType ?actType ;
+            cco:standardValue ?actValue ;
+            cco:standardUnits ?actUnits . 
+    ?compound rdfs:label ?label. 
+}
+
+  MINUS {
+    ?activity cco:standardUnits '%' .
+  }
+  ?assay cco:hasTarget ?target ;
+         cco:assayType 'Binding' .
+  ?target cco:hasTargetComponent ?targetcmpt .
+  ?targetcmpt cco:targetCmptXref ?uniprot .
+  ?uniprot a cco:UniprotRef
+} ORDER BY ASC(?actValue)
+  LIMIT 30
+
+</query>
+      <DATATYPES>Proteins
+</DATATYPES>
+    </Protein_compound_interactions.sparql>
+  </ChEMBL>
   <Uniprot>
     <Enzyme_protein_interactions.sparql>
       <DESCRIPTION> This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
 </DESCRIPTION>
-      <MENU_LABEL> get interaction with Proteins
+      <MENU_LABEL> Get Enzyme-Protein Interactions
 </MENU_LABEL>
       <SPARQL>http://sparql.uniprot.org/sparql/
 </SPARQL>
@@ -94,19 +185,33 @@ SELECT DISTINCT ?targetprotein ?label WHERE {
       <SPARQL>http://sparql.wikipathways.org
 </SPARQL>
       <query>
-PREFIX gpml:    &lt;http://vocabularies.wikipathways.org/gpml#&gt;
-PREFIX dcterms: &lt;http://purl.org/dc/terms/&gt;
-PREFIX dc:      &lt;http://purl.org/dc/elements/1.1/&gt;
-PREFIX rdf:     &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX gpml:&lt;http://vocabularies.wikipathways.org/gpml#&gt;
+PREFIX dcterms:&lt;http://purl.org/dc/terms/&gt;
+PREFIX dc:&lt;http://purl.org/dc/elements/1.1/&gt;
+PREFIX rdf:&lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX wp:&lt;http://vocabularies.wikipathways.org/wp#&gt;
+PREFIX rdfs:&lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+			
+SELECT DISTINCT ?pathway ?interaction ?typeInt  ?participants ?source ?target ?typeS ?typeT (str(?SourceLabel)as?labelS) (str(?TargetLabel)as?labelT)  ?DataNodeLabel  WHERE {
+ ?pathway a wp:Pathway .
+ ?interaction dcterms:isPartOf ?pathway . 
+ ?interaction a wp:Interaction .
+ ?interaction a ?typeInt .
+ FILTER (!regex(str(?typeInt), 'http://vocabularies.wikipathways.org/wp#Interaction','i')) .
+ ?interaction wp:participants ?participants .
 
+ ?participants +sparqlInput+ .
 
-SELECT DISTINCT ?interaction ?pathway  WHERE {
-
-   ?pathway a wp:Pathway .
-   ?interaction dcterms:isPartOf ?pathway .
-   ?interaction a wp:Interaction .
-   ?interaction wp:participants &lt;http://identifiers.org/ensembl/ENSG00000125845&gt; .
-}</query>
+ ?interaction wp:source ?source.
+ ?interaction wp:target ?target.
+ ?source rdfs:label ?SourceLabel . 
+ ?source a ?typeS . 
+ FILTER (!regex(str(?typeS), 'http://vocabularies.wikipathways.org/wp#DataNode','i')) .
+ ?target rdfs:label ?TargetLabel .   
+ ?target a ?typeT . 
+ FILTER (!regex(str(?typeT), 'http://vocabularies.wikipathways.org/wp#DataNode','i')) .
+}
+</query>
       <DATATYPES>Geneproducts, Proteins
 </DATATYPES>
     </get_all_known_interactions.sparql>
@@ -207,19 +312,24 @@ SELECT * WHERE
 </DESCRIPTION>
       <MENU_LABEL> Get genes with the same Disease association
 </MENU_LABEL>
-      <SPARQL>https://query.wikidata.org/bigdata/namespace/wdq/sparql?query={SPARQL}
+      <SPARQL>https://query.wikidata.org/sparql?
 </SPARQL>
       <query>
-PREFIX up:&lt;http://purl.uniprot.org/core/&gt;
-SELECT DISTINCT ?targetprotein
-WHERE
-{
-		VALUES ?sourceprotein {&lt;http://purl.uniprot.org/uniprot/P05023&gt;}
-        ?sourceprotein &lt;http://purl.uniprot.org/core/interaction&gt; ?source .
-        ?targetprotein &lt;http://purl.uniprot.org/core/interaction&gt; ?target .
-        ?source &lt;http://purl.uniprot.org/core/participant&gt; ?t .
-        ?target &lt;http://purl.uniprot.org/core/participant&gt; ?t .
-        FILTER (?sourceprotein != ?targetprotein)
+PREFIX wd: &lt;http://www.wikidata.org/entity/&gt; 
+PREFIX wdt: &lt;http://www.wikidata.org/prop/direct/&gt; 
+PREFIX wikibase: &lt;http://wikiba.se/ontology#&gt; 
+PREFIX p: &lt;http://www.wikidata.org/prop/&gt; 
+PREFIX ps: &lt;http://www.wikidata.org/prop/statement/&gt; 
+PREFIX pq: &lt;http://www.wikidata.org/prop/qualifier/&gt; 
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; 
+PREFIX bd: &lt;http://www.bigdata.com/rdf#&gt; 
+			
+SELECT  ?suggested_entrezid ?suggested_geneLabel WHERE {
+ ?gene wdt:P2293 ?disease .
+ ?gene wdt:P351 "+inputID+" .
+ ?suggested_gene wdt:P2293 ?disease ;
+ wdt:P351 ?suggested_entrezid .
+ SERVICE wikibase:label { bd:serviceParam wikibase:language 'en' }
 }
 </query>
       <DATATYPES>Geneproducts, Metabolites, Complex
@@ -230,54 +340,83 @@ WHERE
 </DESCRIPTION>
       <MENU_LABEL> Is encoded by
 </MENU_LABEL>
-      <SPARQL>https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=
+      <SPARQL>https://query.wikidata.org/sparql?
 </SPARQL>
       <query>
-SELECT ?protein ?geneId
+PREFIX wd: &lt;http://www.wikidata.org/entity/&gt; 
+PREFIX wdt: &lt;http://www.wikidata.org/prop/direct/&gt; 
+PREFIX wikibase: &lt;http://wikiba.se/ontology#&gt; 
+PREFIX p: &lt;http://www.wikidata.org/prop/&gt; 
+PREFIX ps: &lt;http://www.wikidata.org/prop/statement/&gt; 
+PREFIX pq: &lt;http://www.wikidata.org/prop/qualifier/&gt; 
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; 
+PREFIX bd: &lt;http://www.bigdata.com/rdf#&gt; 
+
+SELECT ?gene ?geneLabel ?geneId
 WHERE
 {
-	?protein wdt:P702 ?gene .
-    ?gene wdt:P351 ?geneID .
+	?protein wdt:P352 "+inputID+" ;
+          wdt:P702 ?gene .
+    ?gene wdt:P351 ?geneId .
+	SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
 }
 </query>
       <DATATYPES> Geneproducts, Proteins
 </DATATYPES>
     </encoded_by.sparql>
+    <encodes.sparql>
+      <DESCRIPTION> This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
+</DESCRIPTION>
+      <MENU_LABEL> Encodes
+</MENU_LABEL>
+      <SPARQL>https://query.wikidata.org/sparql?
+</SPARQL>
+      <query>
+PREFIX wd: &lt;http://www.wikidata.org/entity/&gt; 
+PREFIX wdt: &lt;http://www.wikidata.org/prop/direct/&gt; 
+PREFIX wikibase: &lt;http://wikiba.se/ontology#&gt; 
+PREFIX p: &lt;http://www.wikidata.org/prop/&gt; 
+PREFIX ps: &lt;http://www.wikidata.org/prop/statement/&gt; 
+PREFIX pq: &lt;http://www.wikidata.org/prop/qualifier/&gt; 
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; 
+PREFIX bd: &lt;http://www.bigdata.com/rdf#&gt; 
+
+SELECT ?protein ?proteinLabel ?uniprotId
+WHERE
+{
+	?gene wdt:P351 "1234" ;
+          wdt:P688 ?protein .
+    ?protein wdt:P352 ?uniprotId .
+	SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
+}
+</query>
+      <DATATYPES> Geneproducts, Proteins
+</DATATYPES>
+    </encodes.sparql>
     <physically_interacts_with.sparql>
       <DESCRIPTION> This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
 </DESCRIPTION>
       <MENU_LABEL> Physically interacts with
 </MENU_LABEL>
-      <SPARQL>https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=
+      <SPARQL>https://query.wikidata.org/sparql?
 </SPARQL>
       <query>
-SELECT ?source ?sourceLabel ?target ?targetLabel ?source_geneId ?source_uniprotId
-?target_geneId ?target_uniprotId ?source_pubchemId ?target_pubchemId
+PREFIX wd: &lt;http://www.wikidata.org/entity/&gt; 
+PREFIX wdt: &lt;http://www.wikidata.org/prop/direct/&gt; 
+PREFIX wikibase: &lt;http://wikiba.se/ontology#&gt; 
+PREFIX p: &lt;http://www.wikidata.org/prop/&gt; 
+PREFIX ps: &lt;http://www.wikidata.org/prop/statement/&gt; 
+PREFIX pq: &lt;http://www.wikidata.org/prop/qualifier/&gt; 
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; 
+PREFIX bd: &lt;http://www.bigdata.com/rdf#&gt; 
+
+SELECT ?protein ?proteinLabel ?compound ?compoundLabel ?pubchemCid
 WHERE
 {
-?source
-wdt: P129 ?target.
-    OPTIONAL
-{?source
-wdt: P351 ?source_geneId}
-OPTIONAL
-{?source
-wdt: P352 ?source_uniprotId}
-OPTIONAL
-{?source
-wdt: P661 ?source_pubchemId}
-OPTIONAL
-{?target
-wdt: P351 ?target_geneId}
-OPTIONAL
-{?target
-wdt: P352 ?target_uniprotId}
-OPTIONAL
-{?target
-wdt: P661 ?target_pubchemId}
-SERVICE
-wikibase: label
-{bd: serviceParam wikibase: language "en"}
+	?protein wdt:P352 "+inputID+" ;
+          wdt:P129 ?compound .
+    ?compound wdt:P662 ?pubchemCid .
+	SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
 }
 </query>
       <DATATYPES> Geneproducts, Proteins
