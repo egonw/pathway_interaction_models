@@ -1,12 +1,328 @@
 <models>
-    <Uniprot/>
+    <Uniprot>
+        <Enzyme_protein_interactions.sparql>
+            <SPARQL>http://sparql.uniprot.org/sparql/
+            </SPARQL>
+            <DESCRIPTION>This query extracts from Wikipathways all simple interactions. These are relationships between
+                one input and one output pathway element
+            </DESCRIPTION>
+            <DATATYPES>Proteins
+            </DATATYPES>
+            <MENU_LABEL>get interaction with Proteins
+            </MENU_LABEL>
+            <query>
+                PREFIX keywords:&lt;http://purl.uniprot.org/keywords/&gt;
+                PREFIX uniprotkb:&lt;http://purl.uniprot.org/uniprot/&gt;
+                PREFIX taxon:&lt;http://purl.uniprot.org/taxonomy/&gt;
+                PREFIX ec:&lt;http://purl.uniprot.org/enzyme/&gt;
+                PREFIX rdf:&lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+                PREFIX rdfs:&lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+                PREFIX skos:&lt;http://www.w3.org/2004/02/skos/core#&gt;
+                PREFIX owl:&lt;http://www.w3.org/2002/07/owl#&gt;
+                PREFIX bibo:&lt;http://purl.org/ontology/bibo/&gt;
+                PREFIX dc:&lt;http://purl.org/dc/terms/&gt;
+                PREFIX xsd:&lt;http://www.w3.org/2001/XMLSchema#&gt;
+                PREFIX faldo:&lt;http://biohackathon.org/resource/faldo#&gt;
+                PREFIX up:&lt;http://purl.uniprot.org/core/&gt;
+                SELECT DISTINCT ?protein ?label
+                WHERE
+                {
+                VALUES ?enzyme {ec:+inputID+}
+                ?protein up:enzyme ?enzyme .
+                ?protein rdfs:label ?label .
+                ?protein up:organism taxon:+taxon+
+
+                }
+
+            </query>
+        </Enzyme_protein_interactions.sparql>
+        <Protein_enzyme_interactions.sparql>
+            <SPARQL>http://sparql.uniprot.org/sparql/
+            </SPARQL>
+            <DESCRIPTION>This query extracts from Wikipathways all simple interactions. These are relationships between
+                one input and one output pathway element
+            </DESCRIPTION>
+            <DATATYPES>Proteins
+            </DATATYPES>
+            <MENU_LABEL>Get Protein-Enzyme Interactions
+            </MENU_LABEL>
+            <query>
+                PREFIX taxon:&lt;http://purl.uniprot.org/taxonomy/&gt;
+                PREFIX uniprotkb:&lt;http://purl.uniprot.org/uniprot/&gt;
+                PREFIX rdfs:&lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+                PREFIX up:&lt;http://purl.uniprot.org/core/&gt;
+                SELECT DISTINCT ?enzyme ?label WHERE {
+                VALUES ?protein {uniprotkb:+inputID+}
+                ?protein up:enzyme ?enzyme .
+                ?protein rdfs:label ?label .
+                ?protein up:organism taxon:+taxon+ .
+                }
+
+            </query>
+        </Protein_enzyme_interactions.sparql>
+        <Protein_protein_interactions.sparql>
+            <SPARQL>http://sparql.uniprot.org/sparql/
+            </SPARQL>
+            <DESCRIPTION>This query extracts from Wikipathways all simple interactions. These are relationships between
+                one input and one output pathway element
+            </DESCRIPTION>
+            <DATATYPES>Proteins
+            </DATATYPES>
+            <MENU_LABEL>Get Protein-Protein Interactions
+            </MENU_LABEL>
+            <query>
+                PREFIX taxon:&lt;http://purl.uniprot.org/taxonomy/&gt;
+                PREFIX uniprotkb:&lt;http://purl.uniprot.org/uniprot/&gt;
+                PREFIX rdfs:&lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+                PREFIX up:&lt;http://purl.uniprot.org/core/&gt;
+                SELECT DISTINCT ?targetprotein ?label WHERE {
+                VALUES ?sourceprotein {uniprotkb:+inputID+}
+                ?sourceprotein up:interaction ?source .
+                ?targetprotein up:interaction ?target .
+                ?targetprotein rdfs:label ?label .
+                ?source up:participant ?t .
+                ?target up:participant ?t .
+                ?targetprotein ?p ?a.
+                FILTER (?sourceprotein != ?targetprotein)
+                }
+            </query>
+        </Protein_protein_interactions.sparql>
+    </Uniprot>
   <WikiPathways>
-      <binary_interactions.sparql/>
+      <get_all_known_interactions.sparql>
+          <SPARQL>http://sparql.wikipathways.org
+          </SPARQL>
+          <DESCRIPTION>This query extracts from Wikipathways all simple interactions. These are relationships between
+              one input and one output pathway element
+          </DESCRIPTION>
+          <DATATYPES>Geneproducts, Proteins
+          </DATATYPES>
+          <MENU_LABEL>Interacts with
+          </MENU_LABEL>
+          <query>
+              PREFIX gpml: &lt;http://vocabularies.wikipathways.org/gpml#&gt;
+              PREFIX dcterms: &lt;http://purl.org/dc/terms/&gt;
+              PREFIX dc: &lt;http://purl.org/dc/elements/1.1/&gt;
+              PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+
+
+              SELECT DISTINCT ?interaction ?pathway WHERE {
+
+              ?pathway a wp:Pathway .
+              ?interaction dcterms:isPartOf ?pathway .
+              ?interaction a wp:Interaction .
+              ?interaction wp:participants &lt;http://identifiers.org/ensembl/ENSG00000125845&gt; .
+              }
+          </query>
+      </get_all_known_interactions.sparql>
+      <inhibited_by.sparql>
+          <SPARQL>http://sparql.wikipathways.org
+          </SPARQL>
+          <DESCRIPTION>This query extracts from Wikipathways element that are inhibited by a given source. These are
+              relationships between one input and one output pathway element
+          </DESCRIPTION>
+          <DATATYPES>Geneproducts, Proteins
+          </DATATYPES>
+          <MENU_LABEL>inhibits
+          </MENU_LABEL>
+          <query>
+              SELECT * WHERE
+              {
+              ?interaction a wp:Inhibition ;
+              wp:source ?source ;
+              wp:target ?target .
+              ?source dcterms:identifier ?sourceID .
+              ?target dcterms:identifier +inputID+ .
+              }
+          </query>
+      </inhibited_by.sparql>
+      <inhibits.sparql>
+          <SPARQL>http://sparql.wikipathways.org
+          </SPARQL>
+          <DESCRIPTION>This query extracts from Wikipathways element that are inhibited by a given source. These are
+              relationships between one input and one output pathway element
+          </DESCRIPTION>
+          <DATATYPES>Geneproducts, Proteins
+          </DATATYPES>
+          <MENU_LABEL>inhibits
+          </MENU_LABEL>
+          <query>
+              SELECT * WHERE
+              {
+              ?interaction a wp:Inhibition ;
+              wp:source ?source ;
+              wp:target ?target .
+              ?source dcterms:identifier +inputID+ .
+              ?target dcterms:identifier ?targetID .
+              }
+          </query>
+      </inhibits.sparql>
+      <is_targeted_by.sparql>
+          <SPARQL>http://sparql.wikipathways.org
+          </SPARQL>
+          <DESCRIPTION>This query extracts from Wikipathways element that are inhibited by a given source. These are
+              relationships between one input and one output pathway element
+          </DESCRIPTION>
+          <DATATYPES>Geneproducts, Proteins
+          </DATATYPES>
+          <MENU_LABEL>is targeted by
+          </MENU_LABEL>
+          <query>
+              SELECT * WHERE
+              {
+
+              ?interaction a wp:DirectedInhibition .
+              ?interaction wp:source ?source .
+              ?interaction wp:target ?target .
+              }
+          </query>
+      </is_targeted_by.sparql>
+      <stimulates.sparql>
+          <SPARQL>http://sparql.wikipathways.org
+          </SPARQL>
+          <DESCRIPTION>This query extracts from Wikipathways element that are inhibited by a given source. These are
+              relationships between one input and one output pathway element
+          </DESCRIPTION>
+          <DATATYPES>Geneproducts, Proteins
+          </DATATYPES>
+          <MENU_LABEL>stimulates
+          </MENU_LABEL>
+          <query>
+              SELECT * WHERE
+              {
+
+              ?interaction a wp:Stimulation .
+              ?interaction wp:source ?source .
+              ?interaction wp:target ?target .
+              }
+          </query>
+      </stimulates.sparql>
+      <targets.sparql>
+          <SPARQL>http://sparql.wikipathways.org
+          </SPARQL>
+          <DESCRIPTION>This query extracts from Wikipathways element that are inhibited by a given source. These are
+              relationships between one input and one output pathway element
+          </DESCRIPTION>
+          <DATATYPES>Geneproducts, Proteins
+          </DATATYPES>
+          <MENU_LABEL>targets
+          </MENU_LABEL>
+          <query>
+              SELECT * WHERE
+              {
+
+              ?interaction a wp:DirectedInhibition .
+              ?interaction wp:source ?source .
+              ?interaction wp:target ?target .
+              }
+          </query>
+      </targets.sparql>
+      <transcribes_translates.sparql>
+          <SPARQL>http://sparql.wikipathways.org
+          </SPARQL>
+          <DESCRIPTION>This query extracts from Wikipathways element that are inhibited by a given source. These are
+              relationships between one input and one output pathway element
+          </DESCRIPTION>
+          <DATATYPES>Geneproducts, Proteins
+          </DATATYPES>
+          <MENU_LABEL>stimulates
+          </MENU_LABEL>
+          <query>
+              SELECT * WHERE
+              {
+
+              ?interaction a wp:TranscriptionTranslation .
+              ?interaction wp:source ?source .
+              ?interaction wp:target ?target .
+              }
+          </query>
+      </transcribes_translates.sparql>
   </WikiPathways>
   <Wikidata>
-      <Disease_association.sparql/>
-      <encoded_by.sparql/>
+      <Disease_association.sparql>
+          <SPARQL>https://query.wikidata.org/bigdata/namespace/wdq/sparql?query={SPARQL}
+          </SPARQL>
+          <DESCRIPTION>This query extracts from Wikipathways all simple interactions. These are relationships between
+              one input and one output pathway element
+          </DESCRIPTION>
+          <DATATYPES>Geneproducts, Metabolites, Complex
+          </DATATYPES>
+          <MENU_LABEL>Get genes with the same Disease association
+          </MENU_LABEL>
+          <query>
+              PREFIX up:&lt;http://purl.uniprot.org/core/&gt;
+              SELECT DISTINCT ?targetprotein
+              WHERE
+              {
+              VALUES ?sourceprotein {&lt;http://purl.uniprot.org/uniprot/P05023&gt;}
+              ?sourceprotein &lt;http://purl.uniprot.org/core/interaction&gt; ?source .
+              ?targetprotein &lt;http://purl.uniprot.org/core/interaction&gt; ?target .
+              ?source &lt;http://purl.uniprot.org/core/participant&gt; ?t .
+              ?target &lt;http://purl.uniprot.org/core/participant&gt; ?t .
+              FILTER (?sourceprotein != ?targetprotein)
+              }
+          </query>
+      </Disease_association.sparql>
+      <encoded_by.sparql>
+          <SPARQL>https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=
+          </SPARQL>
+          <DESCRIPTION>This query extracts from Wikipathways all simple interactions. These are relationships between
+              one input and one output pathway element
+          </DESCRIPTION>
+          <DATATYPES>Geneproducts, Proteins
+          </DATATYPES>
+          <MENU_LABEL>Is encoded by
+          </MENU_LABEL>
+          <query>
+              SELECT ?protein ?geneId
+              WHERE
+              {
+              ?protein wdt:P702 ?gene .
+              ?gene wdt:P351 ?geneID .
+              }
+          </query>
+      </encoded_by.sparql>
       <encodes.sparql/>
-      <physically_interacts_with.sparql/>
+      <physically_interacts_with.sparql>
+          <SPARQL>https://query.wikidata.org/bigdata/namespace/wdq/sparql?query=
+          </SPARQL>
+          <DESCRIPTION>This query extracts from Wikipathways all simple interactions. These are relationships between
+              one input and one output pathway element
+          </DESCRIPTION>
+          <DATATYPES>Geneproducts, Proteins
+          </DATATYPES>
+          <MENU_LABEL>Physically interacts with
+          </MENU_LABEL>
+          <query>
+              SELECT ?source ?sourceLabel ?target ?targetLabel ?source_geneId ?source_uniprotId
+              ?target_geneId ?target_uniprotId ?source_pubchemId ?target_pubchemId
+              WHERE
+              {
+              ?source
+              wdt: P129 ?target.
+              OPTIONAL
+              {?source
+              wdt: P351 ?source_geneId}
+              OPTIONAL
+              {?source
+              wdt: P352 ?source_uniprotId}
+              OPTIONAL
+              {?source
+              wdt: P661 ?source_pubchemId}
+              OPTIONAL
+              {?target
+              wdt: P351 ?target_geneId}
+              OPTIONAL
+              {?target
+              wdt: P352 ?target_uniprotId}
+              OPTIONAL
+              {?target
+              wdt: P661 ?target_pubchemId}
+              SERVICE
+              wikibase: label
+              {bd: serviceParam wikibase: language "en"}
+              }
+          </query>
+      </physically_interacts_with.sparql>
   </Wikidata>
 </models>
