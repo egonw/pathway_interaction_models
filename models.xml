@@ -1,7 +1,7 @@
 <models>
   <ChEMBL>
     <Compound_targets_interactions.sparql>
-      <DESCRIPTION> This query extracts from Wikipathways all simple interactions. These are relationships between one input and one output pathway element
+      <DESCRIPTION> This query extracts from WikiPathways all simple interactions. These are relationships between one input and one output pathway element
 </DESCRIPTION>
       <MENU_LABEL>Get Compound-Targets interaction
 </MENU_LABEL>
